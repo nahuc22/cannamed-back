@@ -1,11 +1,10 @@
-const { Router } = require("express");
+import { Router } from "express";
+import { createPay, paySucces, webHook } from "../controllers/payController.js";
 
 const payRouters = Router();
 
-const { createPay, paySucces, webHook } = require("../controllers/payController.js")
+payRouters.post("/create", createPay);
+payRouters.get("/:id", paySucces);
+payRouters.get("/", webHook);
 
-payRouters.post("/create", createPay )
-payRouters.get("/:id", paySucces)
-payRouters.get("/", webHook)
-
-module.exports = payRouters;
+export default payRouters;

@@ -1,10 +1,10 @@
-const { Router } = require("express");
-const { createOrder , getOrderById} = require("../controllers/orderController.js")
-const isAuthenticated = require("../middleware/authenticate")
+import { Router } from "express";
+import { createOrder, getOrderById } from "../controllers/orderController.js";
+import isAuthenticated from "../middleware/authenticate.js";
 
 const orderRouters = Router();
 
-orderRouters.post("/create", isAuthenticated , createOrder )
-orderRouters.get("/:id", getOrderById )
+orderRouters.post("/create", isAuthenticated, createOrder);
+orderRouters.get("/:id", getOrderById);
 
-module.exports = orderRouters;
+export default orderRouters;

@@ -1,6 +1,6 @@
-const { DataTypes } = require("sequelize");
+import { DataTypes } from 'sequelize';
 
-module.exports = (sequelize) => {
+const Order = (sequelize) => {
     sequelize.define("Order", {
         id: {
             type: DataTypes.INTEGER,
@@ -30,3 +30,5 @@ module.exports = (sequelize) => {
           },
     }, { timestamps: false });
 };
+
+export default Order;

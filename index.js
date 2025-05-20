@@ -1,8 +1,8 @@
-const app = require("./src/app");
-const {sequelize, connect} = require("./src/db")
+import app from './src/app.js';
+import { sequelize, connect } from './src/db.js';
 
 app.listen(3001, async () => {
-    await sequelize.sync({ alter: true});
+  await sequelize.sync({ alter: true });
 });
 
 connect();

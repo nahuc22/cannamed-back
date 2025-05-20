@@ -1,27 +1,44 @@
-const { Sequelize } = require("sequelize");
-const userModel = require("./models/User");
-const productModel = require("./models/Product");
-const cartModel = require("./models/Cart");
-const orderModel = require("./models/Order");
-const PaymentModel = require("./models/Payment");
-const cartProductModel = require("./models/Cart_Product");
-const orderProductModel = require("./models/Order_Product");
+import { Sequelize } from 'sequelize';
+import userModel from './models/User.js';
+import productModel from './models/Product.js';
+import cartModel from './models/Cart.js';
+import orderModel from './models/Order.js';
+import PaymentModel from './models/Payment.js';
+import cartProductModel from './models/Cart_Product.js';
+import orderProductModel from './models/Order_Product.js';
 
-require('dotenv').config();
-const { DB_USER, DB_PASSWORD , DB_HOST, DB_PORT } = process.env;
+import dotenv from 'dotenv';
+dotenv.config();
 
-const sequelize = new Sequelize(
-    `postgres://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/cannamed`,
-    { logging: false }
-);
+const { DB_USER, DB_PASSWORD, DB_HOST, DB_PORT, DATABASE_URL } = process.env;
+
+const sequelize = DATABASE_URL
+  ? new Sequelize(DATABASE_URL, {
+      dialect: 'postgres',
+      logging: false,
+      dialectOptions: {
+        ssl: {
+          require: true,
+          rejectUnauthorized: false,
+        },
+      },
+    })
+  : new Sequelize(
+      `postgres://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/cannamed`,
+      {
+        logging: false,
+        dialect: 'postgres',
+      }
+    );
+
 
 const connect = async () => {
-    try {
-        await sequelize.authenticate();
-        console.log('Connection has been established successfully.');
-    } catch (error) {
-        console.error('Unable to connect to the database:', error);
-    }
+  try {
+    await sequelize.authenticate();
+    console.log('✅ DB connected successfully.');
+  } catch (error) {
+    console.error('❌ Unable to connect to the database:', error);
+  }
 };
 
 // Inicializar modelos
@@ -34,35 +51,32 @@ cartProductModel(sequelize);
 orderProductModel(sequelize);
 
 // Relaciones
-const { User, Product, Cart, Order, Payment, Cart_Product, Order_Product } = sequelize.models;
-
-User.hasOne(Cart, { foreignKey: "userId" });
-Cart.belongsTo(User, { foreignKey: "userId" });
-
-Cart.belongsToMany(Product, { through: Cart_Product, foreignKey: "cartId" });
-Product.belongsToMany(Cart, { through: Cart_Product, foreignKey: "productId" });
-
-// Relación entre Usuario y Orden
-Order.belongsTo(User, { foreignKey: "userId" });
-User.hasMany(Order, { foreignKey: "userId" });
-
-// Relación entre Orden y Productos (puede ser compra directa)
-Order.belongsToMany(Product, { through: Order_Product, foreignKey: "orderId" });
-Product.belongsToMany(Order, { through: Order_Product, foreignKey: "productId" });
-
-Order.hasMany(Payment, { foreignKey: "orderId" });
-Payment.belongsTo(Order, { foreignKey: "orderId" });
-
-// Relación entre Orden y Carrito (para cuando se genera a partir del carrito completo)
-Order.belongsTo(Cart, { foreignKey: "cartId" });
-Cart.hasOne(Order, { foreignKey: "cartId" });
-
-Order.hasMany(Order_Product, { foreignKey: "orderId" });
-Order_Product.belongsTo(Order, { foreignKey: "orderId" });
-
-// 🔄 Relaciones directas necesarias para eager loading
-Order_Product.belongsTo(Product, { foreignKey: "productId" });
-Product.hasMany(Order_Product, { foreignKey: "productId" });
+export const { User, Product, Cart, Order, Payment, Cart_Product, Order_Product } = sequelize.models;
 
 
-module.exports = { sequelize, ...sequelize.models, connect };
+User.hasOne(Cart, { foreignKey: 'userId' });
+Cart.belongsTo(User, { foreignKey: 'userId' });
+
+Cart.belongsToMany(Product, { through: Cart_Product, foreignKey: 'cartId' });
+Product.belongsToMany(Cart, { through: Cart_Product, foreignKey: 'productId' });
+
+Order.belongsTo(User, { foreignKey: 'userId' });
+User.hasMany(Order, { foreignKey: 'userId' });
+
+Order.belongsToMany(Product, { through: Order_Product, foreignKey: 'orderId' });
+Product.belongsToMany(Order, { through: Order_Product, foreignKey: 'productId' });
+
+Order.hasMany(Payment, { foreignKey: 'orderId' });
+Payment.belongsTo(Order, { foreignKey: 'orderId' });
+
+Order.belongsTo(Cart, { foreignKey: 'cartId' });
+Cart.hasOne(Order, { foreignKey: 'cartId' });
+
+Order.hasMany(Order_Product, { foreignKey: 'orderId' });
+Order_Product.belongsTo(Order, { foreignKey: 'orderId' });
+
+Order_Product.belongsTo(Product, { foreignKey: 'productId' });
+Product.hasMany(Order_Product, { foreignKey: 'productId' });
+
+export { sequelize, connect };
+export const models = sequelize.models;

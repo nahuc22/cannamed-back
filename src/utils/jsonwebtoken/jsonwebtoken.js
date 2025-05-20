@@ -1,4 +1,4 @@
-const jwt = require('jsonwebtoken');
+import jwt from 'jsonwebtoken';
 
 const getToken = (user) => {
     return jwt.sign(
@@ -7,5 +7,5 @@ const getToken = (user) => {
         { expiresIn: process.env.JWT_EXPIRES_IN || "7d"}
     )
 }
-
-module.exports =  getToken 
+    
+export default getToken; 

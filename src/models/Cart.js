@@ -1,6 +1,6 @@
-const { DataTypes } = require("sequelize");
+import { DataTypes } from 'sequelize';
 
-module.exports = (sequelize) => {
+const CartModel = (sequelize) => {
     const Cart = sequelize.define("Cart", {
         id: {
             type: DataTypes.INTEGER,
@@ -17,3 +17,5 @@ module.exports = (sequelize) => {
 
     return Cart;
 };
+
+export default CartModel;
