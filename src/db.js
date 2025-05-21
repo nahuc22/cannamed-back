@@ -11,7 +11,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const { DB_USER, DB_PASSWORD, DB_HOST, DB_PORT, DATABASE_URL } = process.env;
-
+console.log(DATABASE_URL)
 const sequelize = DATABASE_URL
   ? new Sequelize(DATABASE_URL, {
       dialect: 'postgres',
