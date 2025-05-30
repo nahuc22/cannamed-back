@@ -26,11 +26,7 @@ const Product = (sequelize) => {
         image: {
             type: DataTypes.STRING,
             allowNull: false
-        },
-        categories: {
-            type: DataTypes.STRING,
-            allowNull: false
-        },
+        }
     }, {timestamps:false}
     ) 
 }
